@@ -20,13 +20,16 @@ int main(int argc, char* argv[])
     if (std::strcmp(argv[i], "-d") == 0)
       daemonize();
   }
+  
   google::SetLogDestination(google::INFO, LOG_DIR.c_str());
   google::InitGoogleLogging(argv[0]);
   
   google::InstallFailureSignalHandler();
   
   google::InstallFailureWriter(*write_stack_trace_to_log);
-  responder();
+  
+  zmq::context_t context(1);
+  responder(&context);
   return 0;
 }
 
@@ -36,9 +39,9 @@ void annotate_request(URLRequest& req)
   return;
 }
 
-void responder ()
+void responder (zmq::context_t * ctx)
 {
-  zmqcpp::Socket socket(ZMQ_REP);
+  zmqcpp::socket_t socket(*ctx, ZMQ_REP);
   zmqcpp::Message mesg;
   URLRequest dat;
   std::string annotated;

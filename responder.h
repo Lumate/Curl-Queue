@@ -20,14 +20,12 @@ const char ROUTER[] = "tcp://curl-queue.lumate.org:5556";
 /// \brief Takes a request, and curls external resource for it
 /// \pre TODO: figure out pres
 /// \post Sends annotated data over ZeroMQ socket to original requester
-void responder ();
+void responder (zmq::context_t * ctx);
 
 //
 /// \brief Annotates the request data
-/// \pre TODO: figure out pres (none as of yet, there will be some)
-/// \post populates the request with data from the esri datastore
-/// \post Queries MongoDB instance(s)
-/// \return String containing annotated JSON data
+/// \pre TODO: figure out pres 
+/// \post populates the request with data from curl
 //
 void annotate_request(URLRequest& req);
 

@@ -9,6 +9,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include "url_request.pb.h"
 
 //
 /// \brief libcurl callback for CURLOPT_WRITEFUNCTION
@@ -31,4 +32,4 @@ CURLcode curl_read(const std::string& url, long timeout = 3);
 /// \param req: protobuf containing request/response
 /// \return bool success
 //
-bool get_url(URLRequest& req);
+void get_url(URLRequest& req);

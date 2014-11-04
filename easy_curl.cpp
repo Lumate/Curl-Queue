@@ -37,7 +37,7 @@ CURLcode curl_read(const std::string& url, long timeout = 3)
     return code;
 }
 
-bool get_url(URLRequest& req)
+void get_url(URLRequest& req)
 {
     curl_global_init(CURL_GLOBAL_ALL);
     
@@ -55,4 +55,6 @@ bool get_url(URLRequest& req)
     }
 
     curl_global_cleanup();
+    data.clear();
+    return;
 }
