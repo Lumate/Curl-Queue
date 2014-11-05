@@ -50,7 +50,7 @@ void responder ()
     socket >> mesg;
     dat.ParseFromString(mesg.last());
     annotate_request(dat);
-    CHECK(dat.response() == true) << "Failed to return a response!";
+    CHECK(dat.has_response() == true) << "Failed to return a response!";
     mesg.clear();
     dat.SerializeToString(& annotated);
     socket << zmqcpp::Message(annotated);

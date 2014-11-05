@@ -24,12 +24,12 @@ int main (int argc, char* argv[])
     
     URLRequest data, data2;
     data.set_request_url("http://www.example.com/path");
-    zmq::message_t msg(data.ByteSize());
-    zmq::message_t rsp;
     for (int i=0; i<reqs; i++)
     {
+      zmq::message_t msg(data.ByteSize());
       data.SerializeToArray(msg.data(), data.GetCachedSize());
       socket.send(msg);
+      zmq::message_t rsp;
       socket.recv(&rsp);
       data2.ParseFromArray(rsp.data(), rsp.size());
     }
