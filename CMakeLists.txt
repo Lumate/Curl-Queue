@@ -39,10 +39,16 @@ set(worker_sources
     easy_curl.cpp
 )
 
+set ( testclient_sources
+      testclient.cpp
+)
+
 add_subdirectory(zmq)
 
 add_executable(router ${router_sources})
 add_executable(worker ${worker_sources} ${pbuf_sources})
+add_executable(testclient ${testclient_sources} ${pbuf_sources})
 
 target_link_libraries(router ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
 target_link_libraries(worker zmqcpp curl ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
+target_link_libraries(testclient ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
