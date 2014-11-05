@@ -42,5 +42,3 @@ add_executable(worker ${worker_sources} ${pbuf_sources})
 
 target_link_libraries(router ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
 target_link_libraries(worker ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
-
-add_subdirectory(tests)

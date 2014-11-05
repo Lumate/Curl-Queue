@@ -28,8 +28,7 @@ int main(int argc, char* argv[])
   
   google::InstallFailureWriter(*write_stack_trace_to_log);
   
-  zmq::context_t context(1);
-  responder(&context);
+  responder();
   return 0;
 }
 
@@ -39,9 +38,9 @@ void annotate_request(URLRequest& req)
   return;
 }
 
-void responder (zmq::context_t * ctx)
+void responder ()
 {
-  zmqcpp::socket_t socket(*ctx, ZMQ_REP);
+  zmqcpp::socket_t socket(ZMQ_REP);
   zmqcpp::Message mesg;
   URLRequest dat;
   std::string annotated;

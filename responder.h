@@ -20,7 +20,7 @@ const char ROUTER[] = "tcp://curl-queue.lumate.org:5556";
 /// \brief Takes a request, and curls external resource for it
 /// \pre TODO: figure out pres
 /// \post Sends annotated data over ZeroMQ socket to original requester
-void responder (zmq::context_t * ctx);
+void responder ();
 
 //
 /// \brief Annotates the request data
