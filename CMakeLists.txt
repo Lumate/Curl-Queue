@@ -32,10 +32,14 @@ set(pbuf_sources
 
 set(router_sources
     server.cpp
-   )
+)
+
 set(worker_sources
     responder.cpp
-    )
+    easy_curl.cpp
+)
+
+add_subdirectory(zmq)
 
 add_executable(router ${router_sources})
 add_executable(worker ${worker_sources} ${pbuf_sources})

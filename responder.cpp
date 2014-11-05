@@ -34,13 +34,13 @@ int main(int argc, char* argv[])
 
 void annotate_request(URLRequest& req)
 {
-  get_url(req)
+  get_url(req);
   return;
 }
 
 void responder ()
 {
-  zmqcpp::socket_t socket(ZMQ_REP);
+  zmqcpp::Socket socket(ZMQ_REP);
   zmqcpp::Message mesg;
   URLRequest dat;
   std::string annotated;
