@@ -30,7 +30,7 @@ int main (int argc, char* argv[])
     {
       data.SerializeToArray(msg.data(), data.GetCachedSize());
       socket.send(msg);
-      sock.recv(&rsp);
+      socket.recv(&rsp);
       data2.ParseFromArray(rsp.data(), rsp.size());
     }
 

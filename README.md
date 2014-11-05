@@ -3,6 +3,13 @@ Curl-Queue
 
 URL capturing over zmq for scalable external request handling
 
+Requirements
+------------
+You will need zmq and protobuf and curl libs installed
+```
+sudo apt-get install libcurl4-gnutls-dev
+```
+
 Building
 --------
 ```
