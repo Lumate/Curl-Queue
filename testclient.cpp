@@ -7,7 +7,6 @@
 #include <string>
 #include <iostream>
 #include "url_request.pb.h"
-#include "protobuf/zmq_wrapper/zmq_pbuff.h"
 
 using namespace std;
 
@@ -25,10 +24,14 @@ int main (int argc, char* argv[])
     
     URLRequest data, data2;
     data.set_request_url("http://www.example.com/path");
+    zmq::message_t msg(data.ByteSize());
+    zmq::message_t rsp;
     for (int i=0; i<reqs; i++)
     {
-      socket << data;
-      socket >> data2;
+      data.SerializeToArray(msg.data(), data.GetCachedSize());
+      socket.send(msg);
+      sock.recv(&rsp);
+      data2.ParseFromArray(rsp.data(), rsp.size());
     }
 
     cout << data2.response() << endl;
