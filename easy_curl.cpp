@@ -38,8 +38,8 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, const 
             code = curl_easy_perform(curl);
         }
         // get stats on the response
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, response_code);
-        curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, response_time);
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+        curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &response_time);
         
         curl_easy_cleanup(curl);
     }
