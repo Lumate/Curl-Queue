@@ -1,0 +1,6 @@
+[submodule "zmq"]
+	path = zmq
+	url = git@github.com:neloe/EasyZMQ-Cpp.git
+[submodule "mt-proxy"]
+	path = mt-proxy
+	url = git@github.com:Lumate/mt-proxy.git

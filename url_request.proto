@@ -1,0 +1,14 @@
+//urlrequest.proto
+
+message URLRequest {
+
+  optional string request_url      = 1;
+  repeated string request_headers  = 2;
+  optional string request_body     = 3;
+  optional bool   response         = 4;
+  optional string response_time    = 5;
+  optional string response_status  = 6;
+  repeated string response_headers = 7;
+  optional string response_body    = 8;
+  
+}
