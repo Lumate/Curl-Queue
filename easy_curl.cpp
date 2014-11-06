@@ -6,13 +6,15 @@
 
 #include "easy_curl.h"
 
-std::string data;
+std::string response_data;
+std::long response_code;
+std::double response_time;
 
 static size_t data_write(char* buf, size_t size, size_t nmemb, void* userp)
 {
     for (int c = 0; c<size*nmemb; c++)
     {
-        data.push_back(buf[c]);
+        response_data.push_back(buf[c]);
     }
     return size*nmemb;
 }
@@ -24,6 +26,7 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, char *
 
     if(curl)
     {
+        // set options for the request
         if(CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &data_write))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L))
@@ -34,6 +37,10 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, char *
         {
             code = curl_easy_perform(curl);
         }
+        // get stats on the response
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, response_code);
+        curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, response_time);
+        
         curl_easy_cleanup(curl);
     }
     return code;
@@ -65,12 +72,16 @@ void get_url(URLRequest& req)
         if(CURLE_OK == curl_read(req.request_url(), m_headerlist, post_body))
         {
             req.set_response(true);
-            req.set_response_body(data);
+            req.set_response_time(response_time);
+            req.set_response_status(response_code);
+            req.set_response_body(response_data);
         }
     }
 
     curl_slist_free_all(m_headerlist); 
     curl_global_cleanup();
-    data.clear();
+    response_data.clear();
+    response_code.clear();
+    response_time.clear();
     return;
 }
