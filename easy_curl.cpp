@@ -17,7 +17,7 @@ static size_t data_write(char* buf, size_t size, size_t nmemb, void* userp)
     return size*nmemb;
 }
 
-CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, long timeout = 3)
+CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, char *post_body, long timeout = 3)
 {
     CURLcode code(CURLE_FAILED_INIT);
     CURL* curl = curl_easy_init();
@@ -29,6 +29,7 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, long t
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist))
+        && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, url.c_str())))
         {
             code = curl_easy_perform(curl);
@@ -44,8 +45,9 @@ void get_url(URLRequest& req)
     req.set_response(false);
     
     struct curl_slist *m_headerlist = NULL;
+    char *post_body;
     
-    if (req.request_headers_size() > 0)
+    if(req.request_headers_size() > 0)
     {
         for (int i = 0; i < req.request_headers_size(); i++)
         {
@@ -53,9 +55,14 @@ void get_url(URLRequest& req)
         }
     }
     
+    if(req.has_request_body())
+    {
+        post_body = req.request_body().c_str()
+    }
+    
     if(req.has_request_url())
     {
-        if(CURLE_OK == curl_read(req.request_url(), m_headerlist))
+        if(CURLE_OK == curl_read(req.request_url(), m_headerlist, post_body))
         {
             req.set_response(true);
             req.set_response_body(data);

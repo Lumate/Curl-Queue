@@ -20,19 +20,21 @@ int main (int argc, char* argv[])
 
     int reqs = 10;
     if (argc > 1)
-      reqs = atoi(argv[1]);
+        reqs = atoi(argv[1]);
     
     URLRequest data, data2;
     data.set_request_url("http://www.example.com/path");
     data.add_request_headers("Content-Type: application/json");
+    data.set_request_body("{\"key\":\"value\"}");
+    
     for (int i=0; i<reqs; i++)
     {
-      zmq::message_t msg(data.ByteSize());
-      data.SerializeToArray(msg.data(), data.GetCachedSize());
-      socket.send(msg);
-      zmq::message_t rsp;
-      socket.recv(&rsp);
-      data2.ParseFromArray(rsp.data(), rsp.size());
+        zmq::message_t msg(data.ByteSize());
+        data.SerializeToArray(msg.data(), data.GetCachedSize());
+        socket.send(msg);
+        zmq::message_t rsp;
+        socket.recv(&rsp);
+        data2.ParseFromArray(rsp.data(), rsp.size());
     }
 
     cout << data2.response() << endl;
