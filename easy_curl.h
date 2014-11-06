@@ -25,7 +25,7 @@ static size_t data_write(char* buf, size_t size, size_t nmemb, void* userp);
 /// \param timeout: how long to wait for the resource in seconds
 /// \return curl status code
 //
-CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, long timeout);
+CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, const char *post_body, long timeout);
 
 //
 /// \brief curls a url and gets response

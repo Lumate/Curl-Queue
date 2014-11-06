@@ -7,8 +7,8 @@
 #include "easy_curl.h"
 
 std::string response_data;
-std::long response_code;
-std::double response_time;
+long response_code;
+double response_time;
 
 static size_t data_write(char* buf, size_t size, size_t nmemb, void* userp)
 {
@@ -19,7 +19,7 @@ static size_t data_write(char* buf, size_t size, size_t nmemb, void* userp)
     return size*nmemb;
 }
 
-CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, char *post_body, long timeout = 3)
+CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, const char *post_body, long timeout = 3)
 {
     CURLcode code(CURLE_FAILED_INIT);
     CURL* curl = curl_easy_init();
@@ -52,7 +52,7 @@ void get_url(URLRequest& req)
     req.set_response(false);
     
     struct curl_slist *m_headerlist = NULL;
-    char *post_body;
+    const char *post_body;
     
     if(req.request_headers_size() > 0)
     {
