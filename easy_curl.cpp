@@ -32,7 +32,7 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, const 
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist))
-        && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body))
+        && CURLE_OK == (code = (post_body!=NULL)?curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_body):CURLE_OK)
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, url.c_str())))
         {
             code = curl_easy_perform(curl);
@@ -52,7 +52,7 @@ void get_url(URLRequest& req)
     req.set_response(false);
     
     struct curl_slist *m_headerlist = NULL;
-    const char *post_body;
+    const char *post_body = NULL;
     
     if(req.request_headers_size() > 0)
     {
