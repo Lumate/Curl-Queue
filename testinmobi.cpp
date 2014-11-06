@@ -75,6 +75,8 @@ int main (int argc, char* argv[])
     }
 
     cout << data2.response() << endl;
+    cout << data2.response_time() << endl;
+    cout << data2.response_status() << endl;
     cout << data2.response_body() << endl;
     google::protobuf::ShutdownProtobufLibrary();
     return 0;

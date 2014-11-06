@@ -72,8 +72,8 @@ void get_url(URLRequest& req)
         if(CURLE_OK == curl_read(req.request_url(), m_headerlist, post_body))
         {
             req.set_response(true);
-            req.set_response_time(response_time);
-            req.set_response_status(response_code);
+            req.set_response_time(std::to_string(response_time));
+            req.set_response_status(std::to_string(response_code));
             req.set_response_body(response_data);
         }
     }
@@ -81,7 +81,7 @@ void get_url(URLRequest& req)
     curl_slist_free_all(m_headerlist); 
     curl_global_cleanup();
     response_data.clear();
-    response_code.clear();
-    response_time.clear();
+    response_code = 0;
+    response_time = 0;
     return;
 }
