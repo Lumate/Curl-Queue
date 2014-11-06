@@ -1,7 +1,7 @@
 //
 /// \file testclient.cpp
-/// \author Nathan Eloe (from http://zguide.zeromq.org/cpp:hwclient)
-/// \brief A simple, dumb test client to test the threaded server
+/// \author James Marlowe
+/// \brief A simple test to call the router and print the response
 //
 #include <zmq.hpp>
 #include <string>
@@ -24,9 +24,9 @@ int main (int argc, char* argv[])
     
     URLRequest data, data2;
     data.set_request_url("http://www.example.com/path");
-    data.add_request_headers("Content-Type: application/json");
-    data.set_request_body("{\"key\":\"value\"}");
+    data.add_request_headers("Header: whatever");
     
+    std::cout << "Sending requests…" << std::endl;
     for (int i=0; i<reqs; i++)
     {
         zmq::message_t msg(data.ByteSize());

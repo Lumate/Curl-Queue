@@ -57,7 +57,7 @@ void get_url(URLRequest& req)
     
     if(req.has_request_body())
     {
-        post_body = req.request_body().c_str()
+        post_body = req.request_body().c_str();
     }
     
     if(req.has_request_url())
