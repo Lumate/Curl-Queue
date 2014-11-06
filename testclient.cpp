@@ -24,6 +24,7 @@ int main (int argc, char* argv[])
     
     URLRequest data, data2;
     data.set_request_url("http://www.example.com/path");
+    data.add_request_headers("Content-Type: application/json");
     for (int i=0; i<reqs; i++)
     {
       zmq::message_t msg(data.ByteSize());

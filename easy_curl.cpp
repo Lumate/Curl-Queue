@@ -28,7 +28,7 @@ CURLcode curl_read(const std::string& url, struct curl_slist *headerlist, long t
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout))
-        && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_TIMEOUT, headerlist))
+        && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist))
         && CURLE_OK == (code = curl_easy_setopt(curl, CURLOPT_URL, url.c_str())))
         {
             code = curl_easy_perform(curl);
@@ -45,17 +45,17 @@ void get_url(URLRequest& req)
     
     struct curl_slist *m_headerlist = NULL;
     
-    if (req.has_request_headers())
+    if (req.request_headers_size() > 0)
     {
         for (int i = 0; i < req.request_headers_size(); i++)
         {
-            m_headerlist = curl_slist_append(m_headerlist, req.request_headers(i));
+            m_headerlist = curl_slist_append(m_headerlist, req.request_headers(i).c_str());
         }
     }
     
     if(req.has_request_url())
     {
-        if(CURLE_OK == curl_read(req.request_url()))
+        if(CURLE_OK == curl_read(req.request_url(), m_headerlist))
         {
             req.set_response(true);
             req.set_response_body(data);
