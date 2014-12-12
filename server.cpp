@@ -30,14 +30,11 @@ void daemonize();
  */
 void write_stack_trace_to_log(const char* data, int size);
 
-void run_thread(zmq::context_t*);
-
 void launch_proxy(const std::string & in_port, const std::string & out_port,
                   const SocketPairType sockpair, zmq::context_t* ctx);
 
 int main(int argc, char* argv[])
 {
-  int numthreads = 0;
   for (int i = 1; i < argc; i ++)
   {
     if (std::strcmp(argv[i], "-d") == 0)
@@ -51,13 +48,10 @@ int main(int argc, char* argv[])
   
   google::InstallFailureWriter(*write_stack_trace_to_log);
   
-  LOG(INFO) << "Initializing server with " << numthreads << " threads" << std::endl;
+  LOG(INFO) << "Initializing server" << std::endl;
   
   zmq::context_t context(1);
-  std::vector<std::thread> workers;
   proxy_thread = std::unique_ptr<std::thread> (new std::thread (launch_proxy, LISTEN_ADDR, WORKER_ADDR, &context));
-  for (int i=0; i<numthreads; i++)
-    workers.push_back(std::thread(run_thread, &context));
   proxy_thread->join();
   
   return 0;
@@ -73,8 +67,7 @@ void daemonize()
     exit(EXIT_SUCCESS);
 }
 
-void launch_proxy(const std::string & in_port, const std::string & out_port,
-                  const SocketPairType sockpair, zmq::context_t* ctx)
+void launch_proxy(const std::string & in_port, const std::string & out_port, zmq::context_t* ctx)
 {
   zmq::socket_t clients(*ctx, ZMQ_ROUTER);
   zmq::socket_t workers(*ctx, ZMQ_DEALER);
