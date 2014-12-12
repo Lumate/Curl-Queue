@@ -7,7 +7,7 @@ Requirements
 ------------
 You will need zmq and protobuf and curl libs installed
 ```
-sudo apt-get install libcurl4-gnutls-dev
+sudo apt-get install libcurl4-gnutls-dev libprotobuf-dev libzmq-dev libboost-all-dev
 ```
 
 Building
