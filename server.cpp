@@ -3,7 +3,6 @@
  * \brief proxy server copied from idificator for curl-queue
  */
 
-#include "mt-proxy/mt-proxy.h"
 #include <cstring>
 #include <zmq.hpp>
 #include <unistd.h>
@@ -22,6 +21,8 @@ const char WORKER_ADDR[] = "tcp://*:5556";
  */
 void daemonize();
 
+void blank(zmq::context_t*);
+
 /*!
  * \brief Custom writer function for glog stack traces
  * \pre None
@@ -29,7 +30,8 @@ void daemonize();
  */
 void write_stack_trace_to_log(const char* data, int size);
 
-void do_nothing(zmq::context_t*){}
+void launch_proxy(const std::string & in_port, const std::string & out_port,
+                  const SocketPairType sockpair, zmq::context_t* ctx);
 
 int main(int argc, char* argv[])
 {
@@ -48,11 +50,14 @@ int main(int argc, char* argv[])
   google::InstallFailureWriter(*write_stack_trace_to_log);
   
   LOG(INFO) << "Initializing server with " << numthreads << " threads" << std::endl;
-
+  
   zmq::context_t context(1);
-  mtproxy::MTProxy<do_nothing> proxy(numthreads, mtproxy::REQ_REP, LISTEN_ADDR, WORKER_ADDR, &context);
-  proxy.start();
-  proxy.join();
+  std::vector<std::thread> workers;
+  proxy_thread = std::unique_ptr<std::thread> (new std::thread (launch_proxy, LISTEN_ADDR, WORKER_ADDR, &context));
+  for (int i=0; i<numthreads; i++)
+    workers.push_back(std::thread(blank, &context));
+  proxy_thread->join();
+  
   return 0;
 }
 
@@ -64,6 +69,19 @@ void daemonize()
     exit(EXIT_FAILURE);
   if (pid > 0)
     exit(EXIT_SUCCESS);
+}
+
+void launch_proxy(const std::string & in_port, const std::string & out_port,
+                  const SocketPairType sockpair, zmq::context_t* ctx)
+{
+  zmq::socket_t clients(*ctx, ZMQ_ROUTER);
+  zmq::socket_t workers(*ctx, ZMQ_DEALER);
+  clients.bind(in_port.c_str());
+  workers.bind(out_port.c_str());
+  zmq_proxy(clients, workers, nullptr);
+  zmq_close(clients);
+  zmq_close(workers);
+  return;
 }
 
 void write_stack_trace_to_log(const char* data, int size)
