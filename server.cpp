@@ -3,7 +3,6 @@
  * \brief proxy server copied from idificator for curl-queue
  */
 
-#include "mt-proxy/mt-proxy.h"
 #include <cstring>
 #include <zmq.hpp>
 #include <unistd.h>
@@ -22,6 +21,8 @@ const char WORKER_ADDR[] = "tcp://*:5556";
  */
 void daemonize();
 
+
+
 /*!
  * \brief Custom writer function for glog stack traces
  * \pre None
@@ -29,11 +30,8 @@ void daemonize();
  */
 void write_stack_trace_to_log(const char* data, int size);
 
-void do_nothing(zmq::context_t*){}
-
 int main(int argc, char* argv[])
 {
-  int numthreads = 0;
   for (int i = 1; i < argc; i ++)
   {
     if (std::strcmp(argv[i], "-d") == 0)
@@ -47,12 +45,17 @@ int main(int argc, char* argv[])
   
   google::InstallFailureWriter(*write_stack_trace_to_log);
   
-  LOG(INFO) << "Initializing server with " << numthreads << " threads" << std::endl;
-
+  LOG(INFO) << "Initializing server" << std::endl;
+  
   zmq::context_t context(1);
-  mtproxy::MTProxy<do_nothing> proxy(numthreads, mtproxy::REQ_REP, LISTEN_ADDR, WORKER_ADDR, &context);
-  proxy.start();
-  proxy.join();
+  zmq::socket_t clients(*ctx, ZMQ_ROUTER);
+  zmq::socket_t workers(*ctx, ZMQ_DEALER);
+  clients.bind(LISTEN_ADDR);
+  workers.bind(WORKER_ADDR);
+  zmq_proxy(clients, workers, nullptr);
+  zmq_close(clients);
+  zmq_close(workers);
+  
   return 0;
 }
 
