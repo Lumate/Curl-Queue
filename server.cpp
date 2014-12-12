@@ -48,8 +48,8 @@ int main(int argc, char* argv[])
   LOG(INFO) << "Initializing server" << std::endl;
   
   zmq::context_t context(1);
-  zmq::socket_t clients(*ctx, ZMQ_ROUTER);
-  zmq::socket_t workers(*ctx, ZMQ_DEALER);
+  zmq::socket_t clients(context, ZMQ_ROUTER);
+  zmq::socket_t workers(context, ZMQ_DEALER);
   clients.bind(LISTEN_ADDR);
   workers.bind(WORKER_ADDR);
   zmq_proxy(clients, workers, nullptr);
