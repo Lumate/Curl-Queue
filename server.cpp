@@ -30,9 +30,6 @@ void daemonize();
  */
 void write_stack_trace_to_log(const char* data, int size);
 
-void launch_proxy(const std::string & in_port, const std::string & out_port,
-                  const SocketPairType sockpair, zmq::context_t* ctx);
-
 int main(int argc, char* argv[])
 {
   for (int i = 1; i < argc; i ++)
@@ -51,8 +48,13 @@ int main(int argc, char* argv[])
   LOG(INFO) << "Initializing server" << std::endl;
   
   zmq::context_t context(1);
-  proxy_thread = std::unique_ptr<std::thread> (new std::thread (launch_proxy, LISTEN_ADDR, WORKER_ADDR, &context));
-  proxy_thread->join();
+  zmq::socket_t clients(*ctx, ZMQ_ROUTER);
+  zmq::socket_t workers(*ctx, ZMQ_DEALER);
+  clients.bind(LISTEN_ADDR);
+  workers.bind(WORKER_ADDR);
+  zmq_proxy(clients, workers, nullptr);
+  zmq_close(clients);
+  zmq_close(workers);
   
   return 0;
 }
@@ -65,18 +67,6 @@ void daemonize()
     exit(EXIT_FAILURE);
   if (pid > 0)
     exit(EXIT_SUCCESS);
-}
-
-void launch_proxy(const std::string & in_port, const std::string & out_port, zmq::context_t* ctx)
-{
-  zmq::socket_t clients(*ctx, ZMQ_ROUTER);
-  zmq::socket_t workers(*ctx, ZMQ_DEALER);
-  clients.bind(in_port.c_str());
-  workers.bind(out_port.c_str());
-  zmq_proxy(clients, workers, nullptr);
-  zmq_close(clients);
-  zmq_close(workers);
-  return;
 }
 
 void write_stack_trace_to_log(const char* data, int size)
