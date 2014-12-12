@@ -21,7 +21,7 @@ const char WORKER_ADDR[] = "tcp://*:5556";
  */
 void daemonize();
 
-void blank(zmq::context_t*);
+
 
 /*!
  * \brief Custom writer function for glog stack traces
@@ -29,6 +29,8 @@ void blank(zmq::context_t*);
  * \post Message written to log file
  */
 void write_stack_trace_to_log(const char* data, int size);
+
+void run_thread(zmq::context_t*);
 
 void launch_proxy(const std::string & in_port, const std::string & out_port,
                   const SocketPairType sockpair, zmq::context_t* ctx);
@@ -55,7 +57,7 @@ int main(int argc, char* argv[])
   std::vector<std::thread> workers;
   proxy_thread = std::unique_ptr<std::thread> (new std::thread (launch_proxy, LISTEN_ADDR, WORKER_ADDR, &context));
   for (int i=0; i<numthreads; i++)
-    workers.push_back(std::thread(blank, &context));
+    workers.push_back(std::thread(run_thread, &context));
   proxy_thread->join();
   
   return 0;
