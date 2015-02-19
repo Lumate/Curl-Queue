@@ -11,8 +11,6 @@
 #include <iostream>
 
 const std::string LOG_DIR = "/var/log/server/";
-const char LISTEN_ADDR[] = "tcp://*:5555";
-const char WORKER_ADDR[] = "tcp://*:5556";
 
 /*!
  * \brief launches the program as a daemonize
@@ -20,8 +18,6 @@ const char WORKER_ADDR[] = "tcp://*:5556";
  * \post forks a process, and kills the current process
  */
 void daemonize();
-
-
 
 /*!
  * \brief Custom writer function for glog stack traces
@@ -32,6 +28,12 @@ void write_stack_trace_to_log(const char* data, int size);
 
 int main(int argc, char* argv[])
 {
+  std::string base = "tcp://*:";
+  if (argc < 3)
+  {
+    std::cerr << "Usage: " << argv[0] << " client_port(example: 5555) worker_port(example:5556) [-d]" << std::endl;
+    exit (1);
+  }
   for (int i = 1; i < argc; i ++)
   {
     if (std::strcmp(argv[i], "-d") == 0)
@@ -50,8 +52,8 @@ int main(int argc, char* argv[])
   zmq::context_t context(1);
   zmq::socket_t clients(context, ZMQ_ROUTER);
   zmq::socket_t workers(context, ZMQ_DEALER);
-  clients.bind(LISTEN_ADDR);
-  workers.bind(WORKER_ADDR);
+  clients.bind((base + argv[1]).c_str());
+  workers.bind((base + argv[2]).c_str());
   zmq_proxy(clients, workers, nullptr);
   zmq_close(clients);
   zmq_close(workers);
