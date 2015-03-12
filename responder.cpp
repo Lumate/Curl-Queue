@@ -15,6 +15,12 @@ const std::string LOG_DIR = "/var/log/server/";
 
 int main(int argc, char* argv[])
 {
+  if (argc < 2)
+  {
+    std::cerr << "Usage: " << argv[0] << " worker_port(example:5556) [-d]" << std::endl;
+    exit (1);
+  }
+  const char ROUTER[] = "tcp://localhost:"+argv[1];
   for (int i = 1; i < argc; i ++)
   {
     if (std::strcmp(argv[i], "-d") == 0)
@@ -28,7 +34,7 @@ int main(int argc, char* argv[])
   
   google::InstallFailureWriter(*write_stack_trace_to_log);
   
-  responder();
+  responder(ROUTER);
   return 0;
 }
 
@@ -38,7 +44,7 @@ void annotate_request(URLRequest& req)
   return;
 }
 
-void responder ()
+void responder (char *ROUTER)
 {
   zmqcpp::Socket socket(ZMQ_REP);
   zmqcpp::Message mesg;
