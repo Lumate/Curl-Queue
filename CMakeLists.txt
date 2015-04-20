@@ -19,11 +19,13 @@ find_package(Boost 1.55 COMPONENTS thread system regex REQUIRED)
 
 #Protocol buffers
 find_package(Protobuf REQUIRED)
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+#glog
 find_package(Glog REQUIRED)
 include_directories(GLOG_INCLUDE_DIRS)
 
+include_directories(utils/)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR})
 
 set(pbuf_sources
@@ -37,6 +39,7 @@ set(router_sources
 set(worker_sources
     responder.cpp
     easy_curl.cpp
+    utils/log.cpp
 )
 
 set ( testclient_sources

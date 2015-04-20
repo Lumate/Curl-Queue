@@ -4,6 +4,7 @@
 /// \brief Implementation of responder functionality
 //
 
+#include "log.h"
 #include "responder.h"
 #include <vector>
 #include <thread>
@@ -57,6 +58,12 @@ void responder (const char *ROUTER)
     socket >> mesg;
     dat.ParseFromString(mesg.last());
     annotate_request(dat);
+    if (std::stoi(dat.response_time()) < 180) {
+        log ("Curl Success", std::time(nullptr));
+    }
+    else{
+        log ("Curl Timeout", std::time(nullptr));
+    }
     CHECK(dat.has_response() == true) << "Failed to return a response!";
     mesg.clear();
     dat.SerializeToString(& annotated);
