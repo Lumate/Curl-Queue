@@ -58,6 +58,6 @@ add_executable(testclient ${testclient_sources} ${pbuf_sources})
 add_executable(testinmobi ${testinmobi_sources} ${pbuf_sources})
 
 target_link_libraries(router ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
-target_link_libraries(worker zmqcpp curl ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
+target_link_libraries(worker zmqcpp curl hiredis ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
 target_link_libraries(testclient ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
 target_link_libraries(testinmobi ${ZMQ_LIBRARIES} ${Boost_LIBRARIES} ${PROTOBUF_LIBRARY} ${GLOG_LIBRARIES})
