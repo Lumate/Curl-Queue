@@ -7,6 +7,7 @@
 #include "responder.h"
 #include <vector>
 #include <thread>
+#include <cstring>
 #include <glog/logging.h>
 
 using namespace std;
@@ -20,7 +21,7 @@ int main(int argc, char* argv[])
     std::cerr << "Usage: " << argv[0] << " worker_port(example:5556) [-d]" << std::endl;
     exit (1);
   }
-  const char ROUTER[] = "tcp://localhost:"+argv[1];
+  const char *ROUTER = (std::string("tcp://localhost:")+argv[1]).c_str();
   for (int i = 1; i < argc; i ++)
   {
     if (std::strcmp(argv[i], "-d") == 0)
@@ -44,7 +45,7 @@ void annotate_request(URLRequest& req)
   return;
 }
 
-void responder (char *ROUTER)
+void responder (const char *ROUTER)
 {
   zmqcpp::Socket socket(ZMQ_REP);
   zmqcpp::Message mesg;

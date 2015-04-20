@@ -19,7 +19,7 @@
 /// \brief Takes a request, and curls external resource for it
 /// \pre TODO: figure out pres
 /// \post Sends annotated data over ZeroMQ socket to original requester
-void responder (char *ROUTER);
+void responder (const char *ROUTER);
 
 //
 /// \brief Annotates the request data
